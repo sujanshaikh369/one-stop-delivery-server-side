@@ -1,18 +1,21 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
 const cors = require("cors");
+const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 const app = express();
-const port = 5000;
+require("dotenv").config();
 
-// middleware code
+const port = process.env.PORT || 5000;
+
+//middleware
 app.use(cors());
 app.use(express.json());
 // user: mydbuser1
-// pass: 2Ro22ok7KHtGHu0o
+// pass: 0Xaj8lFcBS956J4L
 
 const uri =
-  "mongodb+srv://mydbuser1:2Ro22ok7KHtGHu0O@cluster0.a06ta.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  "mongodb+srv://mydbuser1:0Xaj8lFcBS956J4L@cluster0.a06ta.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+console.log(uri);
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -24,6 +27,13 @@ async function run() {
     const deliveryCollection = database.collection("deliver");
     const orderCollection = database.collection("order");
 
+    //CREATE A ORDER API
+    app.post("/deliver", async (req, res) => {
+      const data = req.body;
+      const result = await deliveryCollection.insertOne(data);
+      res.send(result);
+      console.log(result);
+    });
     //GET THE API
     app.get("/deliver", async (req, res) => {
       const result = await deliveryCollection.find({}).toArray();
